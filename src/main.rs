@@ -55,10 +55,11 @@ fn main() -> Result<()> {
             }
 
             confirm.zeroize();
-            println!("Encrypted '{}' → '{}' with pass -> '{}'", input.display(), output.display(), password);
 
             // encrypt file
             crypto::encrypt_file_with_password(&input, &output, &password)?;
+            println!("Encrypted '{}' → '{}'", input.display(), output.display());
+
             
             // Wipe password
             password.zeroize();
@@ -67,7 +68,11 @@ fn main() -> Result<()> {
 
         Commands::Decrypt { input, output } => {
             let mut password = rpassword::prompt_password("Password: ")?;
-            println!("Decrypted '{}' → '{}' with pass -> '{}'", input.display(), output.display(), password);
+
+            // decrypt
+            crypto::decrypt_file_with_password(&input, &output, &password)?;
+            println!("Decrypted '{}' → '{}'", input.display(), output.display());
+
             password.zeroize();
         }
     }
