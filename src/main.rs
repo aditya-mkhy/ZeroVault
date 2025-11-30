@@ -1,6 +1,9 @@
+mod crypto;
+
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use zeroize::Zeroize;
+use anyhow::Result;
 
 #[derive(Parser)]
 #[command(name = "zerovault")]
@@ -35,7 +38,7 @@ enum Commands {
     },
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
@@ -53,6 +56,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             confirm.zeroize();
             println!("Encrypted '{}' → '{}' with pass -> '{}'", input.display(), output.display(), password);
+
+            // encrypt file
+            crypto::encrypt_file_with_password(&input, &output, &password)?;
+            
             // Wipe password
             password.zeroize();
 
@@ -66,4 +73,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+
 }
